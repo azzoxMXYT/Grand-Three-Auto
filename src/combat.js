@@ -85,7 +85,7 @@ export function createCombat({
     flash.position.z = selected ? 0.85 : 0.5;
   }
   canvas.addEventListener("pointerdown", (e) => {
-    if (!isActive()) return;
+    if (!isActive() || e.pointerType === "touch") return;
     if (e.button === 0) {
       mouseFire = true;
       queuedShot = true;

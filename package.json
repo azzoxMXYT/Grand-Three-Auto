@@ -1,6 +1,6 @@
 {
   "name": "grand-three-auto",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
@@ -9,9 +9,11 @@
     "desktop": "npm run build && electron .",
     "dist:win": "npm run build && electron-builder --win nsis portable --x64 --publish never",
     "test": "node --test src/*.test.js",
-    "build:html": "npm run build && node scripts/standalone.mjs"
+    "build:html": "npm run build && node scripts/standalone.mjs",
+    "android:sync": "npm run build && cap sync android"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.6.2",
     "@playwright/test": "^1.65.1",
     "electron": "^45.4.1",
     "electron-builder": "^26.18.0",
@@ -63,5 +65,9 @@
       "shortcutName": "Pacific Drive",
       "artifactName": "Pacific-Drive-${version}-Installation-${arch}.${ext}"
     }
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.6.2",
+    "@capacitor/core": "^8.6.2"
   }
 }

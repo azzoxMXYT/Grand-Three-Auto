@@ -1,0 +1,6 @@
+{
+  "appId": "io.github.azzoxmxyt.pacificdrive",
+  "appName": "Pacific Drive",
+  "webDir": "dist",
+  "android": { "backgroundColor": "#122524" }
+}

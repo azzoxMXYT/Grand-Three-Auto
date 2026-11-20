@@ -1,0 +1,68 @@
+name: Android tablette
+on:
+  push:
+    branches: ['arena/e83fd17f-grand-three-auto']
+    paths: ['.github/workflows/android.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: android-actions/setup-android@v3
+      - run: npm ci
+      - run: npm test
+      - run: npx playwright install --with-deps chromium
+      - run: mkdir -p release
+      - run: npm run dev > /tmp/vite.log 2>&1 &
+      - run: node scripts/tablet-smoke.mjs
+      - run: npm run android:sync
+      - name: Compiler et vérifier l’APK de test
+        shell: bash
+        run: |
+          set -o pipefail
+          chmod +x android/gradlew
+          if ! (cd android && ./gradlew assembleDebug --no-daemon --console=plain) 2>&1 | tee /tmp/android-build.log; then
+            python3 - <<'PY'
+          import pathlib
+          text='\n'.join(pathlib.Path('/tmp/android-build.log').read_text().splitlines()[-80:])
+          print('::error::'+text.replace('%','%25').replace('\n','%0A'))
+          PY
+            exit 1
+          fi
+          cp android/app/build/outputs/apk/debug/app-debug.apk release/Pacific-Drive-1.4.0-Android-Test.apk
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose release/*.apk
+          cd release && sha256sum *.apk > SHA256-Android.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Pacific-Drive-Android
+          path: release/
+      - name: Publier la préversion Android
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cat > notes.md <<'NOTES'
+          ## Pacific Drive — Android / Xiaomi Pad 7
+          APK de test Android 7+ avec WebView compatible WebGL 2. Paysage, deux joysticks multitouch, boutons véhicule, tir, visée, rechargement, arme, course/frein et caméra. Démarrage ÉCO, résolution interne jusqu’à 720p, maximum 30 images/s. Ressources incluses, jouable sans téléchargement supplémentaire après installation.
+
+          Téléchargez **Pacific-Drive-1.4.0-Android-Test.apk** depuis cette page sur la tablette. Android peut demander votre autorisation pour installer une application depuis votre navigateur. Ne désactivez pas Play Protect et ne contournez pas une règle administrateur.
+
+          **Distribution de développement :** APK débogable signé avec la clé de test générée par le compilateur, pas une version Google Play ni une signature de production. Une prochaine compilation avec une autre clé peut nécessiter de désinstaller cette version. Pas de collecte de données ou de compte requis par le jeu.
+
+          Tests du multitouch, du tir, du changement d’arme et de la pause dans Chromium simulant une tablette ; compilation APK et vérification de signature automatisées. Pas de test sur une Xiaomi Pad 7 physique : performances et reconnaissance d’une manette Bluetooth non garanties. Si l’écran reste noir, vérifiez la version d’Android System WebView et envoyez le message d’erreur éventuel.
+
+          Prototype original stylisé, pas un GTA complet. Le bouton plein écran dépend du support de la WebView. La visée au stick droit est disponible à pied, comme pour la manette.
+          NOTES
+          gh release create v1.4.0 release/*.apk release/SHA256-Android.txt --target "$GITHUB_SHA" --title "Pacific Drive v1.4.0 — Android tablette" --notes-file notes.md --prerelease

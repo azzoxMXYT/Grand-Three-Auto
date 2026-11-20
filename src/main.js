@@ -1,3 +1,4 @@
+import { createTouchInput, combineInput } from "./touch.js";
 import { frameInterval } from "./quality.js";
 import * as THREE from "three";
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
@@ -353,15 +354,6 @@ document.querySelector("#missionBtn").onclick = () => {
     : "AFFICHER L’ITINÉRAIRE <span>↗</span>";
   toast(route ? "Itinéraire affiché sur la carte" : "Itinéraire masqué");
 };
-document.querySelector("#touchE").onclick = interact;
-document.querySelectorAll("[data-key]").forEach((b) => {
-  b.onpointerdown = (e) => {
-    e.preventDefault();
-    b.setPointerCapture(e.pointerId);
-    keys[b.dataset.key] = true;
-  };
-  b.onpointerup = b.onpointercancel = () => (keys[b.dataset.key] = false);
-});
 const map = document.querySelector("#map").getContext("2d");
 function drawMap(pos) {
   map.fillStyle = "#203d3c";
@@ -445,6 +437,12 @@ const pollPad = createGamepadInput({
   switchWeapon: combat.switchWeapon,
   camera: () => (camMode = (camMode + 1) % 3),
 });
+const pollTouch = createTouchInput({
+  interact,
+  reload: combat.reload,
+  switchWeapon: combat.switchWeapon,
+  camera: () => (camMode = (camMode + 1) % 3),
+});
 renderer.domElement.addEventListener("pointermove", (e) => {
   if (!paused && !driving && e.buttons & 2) {
     viewYaw -= e.movementX * 0.006;
@@ -473,7 +471,7 @@ function frame(now = performance.now()) {
   if (now - lastFrame < interval - 1) return;
   lastFrame = now - ((now - lastFrame) % interval);
   const dt = Math.min(clock.getDelta(), 0.05);
-  const pad = pollPad(!paused);
+  const pad = combineInput(pollPad(!paused), pollTouch(!paused));
   if (!paused) {
     graphics.update(dt);
     const up = keys.z || keys.w || keys.arrowup,

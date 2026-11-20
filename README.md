@@ -105,3 +105,11 @@ Le jeu démarre toujours en **ÉCO**, sans supposer le modèle de votre GPU : om
 Le rendu est plafonné à **30 images/s** en ÉCO et **10 en pause** pour réduire les calculs inutiles. Le mode Élevé est réactivable avec le bouton Graphismes (maximum 60 images/s, résolution jusqu’à 1,5×, ombres et effets). Un plafond n’est pas un débit garanti.
 
 La capture d’un gestionnaire des tâches montrant « Intel Graphics » et environ 8 Go de mémoire ne permet pas de certifier la compatibilité : modèle du GPU, processeur, pilotes et prise en charge WebGL 2 restent déterminants. Aucun benchmark n’a été réalisé sur le PC de l’utilisateur. Fermez les applications inutilisées pour libérer de la RAM. Si le rendu reste noir ou lent, indiquez le modèle du processeur et du GPU, ainsi que le message d’erreur éventuel. Ne désactivez pas les protections Windows : ces réglages ne corrigent pas un blocage de sécurité.
+
+## Version 1.4 : Android tablette / Xiaomi Pad 7
+
+Projet Android Capacitor dans `android/`. APK de test en paysage, joysticks multitouch gauche (bouger / conduire) et droit (viser à pied), commandes véhicule, arme, tir, visée, rechargement, course/frein et caméra. En voiture, poussez le stick gauche vers le haut pour accélérer, vers le bas pour reculer et latéralement pour tourner. ÉCO par défaut pour limiter charge et chauffe, sans garantie de fluidité sur un appareil particulier. La manette physique standard reste disponible si reconnue par la WebView.
+
+L’APK embarque le jeu ; pas de serveur requis. Android 7 minimum et WebView avec WebGL 2 nécessaires. La version distribuée est **débogable et signée avec une clé de test**, pas une version de production ou Google Play. Les clés de signature ne sont pas enregistrées dans Git. Désinstaller peut être nécessaire entre deux compilations signées avec des clés de test différentes. Ne désactivez pas Play Protect et ne contournez pas une politique de gestion de tablette.
+
+Compilation locale : Node.js 22, JDK 21, SDK Android 36 puis `npm ci`, `npm run android:sync`, `cd android` et `./gradlew assembleDebug` (Windows : `gradlew.bat assembleDebug`). APK : `android/app/build/outputs/apk/debug/app-debug.apk`. Le workflow `Android tablette` compile, vérifie la signature et publie l’APK v1.4.0. Le smoke test simule une tablette dans Chromium ; pas de test matériel Xiaomi effectué.
