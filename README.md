@@ -58,3 +58,24 @@ Le fichier `.exe` est placé dans `release/`. `npm run desktop` lance le jeu dan
 Cette version de développement **n’est pas signée**. Ni l’absence d’alerte Defender, ni l’absence d’avertissement SmartScreen ne peut être garantie. Ces deux mécanismes sont différents. Aucune protection Windows n’est désactivée ou contournée par ce projet. Le jeu n’utilise ni obfuscateur ni script de téléchargement à l’exécution et la fenêtre n’a pas accès à Node.js. Une somme SHA-256 accompagne chaque compilation pour vérifier l’intégrité du téléchargement (ce n’est pas une signature numérique).
 
 Pour une distribution publique, l’éditeur devra signer les binaires avec un certificat de signature de code reconnu ou un service de signature approuvé, et soumettre à Microsoft les éventuels faux positifs. Ne désactivez pas l’antivirus et n’ajoutez pas d’exclusion pour lancer un fichier signalé.
+
+## Version 1.1 : manettes et armes
+
+À pied : **clic gauche** pour tirer, **clic droit maintenu + souris** pour viser, **R** pour recharger, **F** pour alterner pistolet / carabine. Le réticule indique la direction réelle des tirs. Les cibles orange sur l’avenue de départ encaissent trois impacts, rapportent 150 $ et réapparaissent après six secondes. Chargeurs et réserves séparés par arme. Pas de tir en voiture, de dégâts aux véhicules ou de combat contre des PNJ.
+
+Manettes à **mapping standard Gamepad API** : branchez la manette et appuyez sur un bouton dans la fenêtre du jeu. Xbox et PlayStation peuvent être reconnues selon le pilote, le navigateur et le mode de connexion ; les mappings non standard ne sont pas gérés.
+
+| Action | Manette |
+| --- | --- |
+| Bouger / direction | Stick gauche |
+| Accélérer / reculer en voiture | RT / LT |
+| Viser à pied | Stick droit ; LT pour rapprocher la caméra |
+| Tirer à pied | RT |
+| Véhicule | Y / triangle |
+| Recharger | X / carré |
+| Changer d’arme | RB / R1 |
+| Courir / frein à main | A / croix |
+| Pause / reprendre | Start / Options |
+| Changer de vue en voiture | Select / Share |
+
+L’indicateur en haut à droite confirme la connexion. La déconnexion libère les entrées de la manette. `npm test` vérifie la zone morte, les actions sur pression, la pause et la déconnexion simulée. Le test avec manettes physiques et le test manuel de l’exécutable Windows restent à effectuer.

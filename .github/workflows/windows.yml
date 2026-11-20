@@ -5,9 +5,14 @@ on:
     branches: ['arena/e83fd17f-grand-three-auto', 'main']
     paths-ignore: ['**.md']
   workflow_dispatch:
+    inputs:
+      publish:
+        description: Publier la préversion v1.1.0
+        type: boolean
+        default: false
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   windows:
@@ -20,6 +25,7 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
+      - run: npm test
       - name: Compiler le jeu Windows x64
         run: npm run dist:win
       - name: Calculer la somme de contrôle SHA-256
@@ -38,3 +44,22 @@ jobs:
             release/SHA256SUMS.txt
           if-no-files-found: error
           retention-days: 30
+      - name: Publier la préversion v1.1.0
+        if: github.event_name == 'workflow_dispatch' && inputs.publish
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cat > notes.md <<'NOTES'
+          ## Manettes et armes
+          - Manettes à mapping standard via Gamepad API (compatibilité effective selon navigateur, pilote et connexion).
+          - Stick gauche : déplacement/direction ; RT/LT : accélérer/reculer en voiture, tirer/viser à pied.
+          - Stick droit : visée à pied ; Y/triangle : véhicule ; X/carré : recharger ; RB/R1 : changer d’arme ; A/croix : courir/freiner ; Start : pause ; Select : caméra.
+          - Pistolet et carabine, chargeurs séparés, rechargement, traceurs et impacts sur cibles d’entraînement orange près du départ. Trois impacts détruisent une cible et rapportent 150 $. Réapparition après six secondes.
+          - Souris : clic gauche tirer, clic droit maintenu + déplacement pour viser ; R recharger ; F changer d’arme. Tir uniquement à pied.
+
+          Appuyez sur un bouton de la manette dans la fenêtre du jeu pour qu’elle soit détectée. Les mappings non standard ne sont pas pris en charge. La caméra manette est orientable à pied seulement. Aucun combat contre des PNJ ni dégâts aux véhicules dans cette version.
+
+          Version Windows 10/11 x64 portable non signée : des avertissements Defender/SmartScreen restent possibles. Ne désactivez pas les protections. Compilation et tests automatisés vérifiés ; pas de validation matérielle avec une vraie manette ou de test manuel Windows dans cet environnement.
+          NOTES
+          gh release create v1.1.0 release/*.exe release/SHA256SUMS.txt --target "$GITHUB_SHA" --title "Pacific Drive v1.1.0 — Manettes et armes" --notes-file notes.md --prerelease
