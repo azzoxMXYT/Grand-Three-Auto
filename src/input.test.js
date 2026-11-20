@@ -41,3 +41,18 @@ test("gamepad input handles edges, pause, analog values and disconnection", () =
   pad = null;
   assert.deepEqual(poll(true), {});
 });
+
+test("Android native adapter normalizes axes, triggers and disconnect", async () => {
+  const { nativeGamepad } = await import("./input.js");
+  const pad = nativeGamepad({
+    connected: true,
+    id: 4,
+    axes: [2, -2, NaN, 0.3],
+    buttons: [1, 0, 0, 0, 0, 0, 0.5, 0.9],
+  });
+  assert.deepEqual(pad.axes, [1, -1, 0, 0.3]);
+  assert.equal(pad.buttons[6].value, 0.5);
+  assert.equal(pad.buttons[7].pressed, true);
+  assert.equal(nativeGamepad({ connected: false }), null);
+  assert.equal(nativeGamepad({ connected: true, axes: [] }), null);
+});

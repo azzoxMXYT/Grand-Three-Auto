@@ -54,6 +54,7 @@ jobs:
       - run: mkdir -p release
       - run: npm run dev > /tmp/vite.log 2>&1 &
       - run: node scripts/tablet-smoke.mjs
+      - run: node scripts/capture-game.mjs
       - run: npm run android:sync
       - name: Compiler et vérifier l’APK de test
         shell: bash
@@ -68,7 +69,7 @@ jobs:
           PY
             exit 1
           fi
-          cp android/app/build/outputs/apk/debug/app-debug.apk release/Pacific-Drive-1.4.0-Android-Test.apk
+          cp android/app/build/outputs/apk/debug/app-debug.apk release/Pacific-Drive-1.4.1-Android-Test.apk
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose release/*.apk
           cd release && sha256sum *.apk > SHA256-Android.txt
       - uses: actions/upload-artifact@v4
@@ -76,15 +77,26 @@ jobs:
         with:
           name: Pacific-Drive-Android
           path: release/
+      - name: Enregistrer les captures réelles dans la branche de travail
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/screenshots/*.png
+          if ! git diff --cached --quiet; then
+            git commit -m "docs: capture real desktop and tablet gameplay"
+            git push origin HEAD:arena/e83fd17f-grand-three-auto
+          fi
       - name: Publier la préversion Android
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           cat > notes.md <<'NOTES'
-          ## Pacific Drive — Android / Xiaomi Pad 7
+          ## Pacific Drive — Android / Xiaomi Pad 7 : manettes
+          Adaptateur Android natif en complément de Gamepad API : sticks, gâchettes analogiques, boutons Xbox/PlayStation mappés par Android ; Bluetooth ou USB selon reconnaissance par le système. Appuyez sur un bouton dans le jeu après connexion. Réinitialisation à la perte de focus et à la déconnexion. Pas de prise en charge garantie de chaque modèle, pas de vibrations. Validation simulée et compilation Java uniquement, pas de test avec une manette physique.
+
           APK de test Android 7+ avec WebView compatible WebGL 2. Paysage, deux joysticks multitouch, boutons véhicule, tir, visée, rechargement, arme, course/frein et caméra. Démarrage ÉCO, résolution interne jusqu’à 720p, maximum 30 images/s. Ressources incluses, jouable sans téléchargement supplémentaire après installation.
 
-          Téléchargez **Pacific-Drive-1.4.0-Android-Test.apk** depuis cette page sur la tablette. Android peut demander votre autorisation pour installer une application depuis votre navigateur. Ne désactivez pas Play Protect et ne contournez pas une règle administrateur.
+          Téléchargez **Pacific-Drive-1.4.1-Android-Test.apk** depuis cette page sur la tablette. Android peut demander votre autorisation pour installer une application depuis votre navigateur. Ne désactivez pas Play Protect et ne contournez pas une règle administrateur.
 
           **Distribution de développement :** APK débogable signé avec la clé de test générée par le compilateur, pas une version Google Play ni une signature de production. Une prochaine compilation avec une autre clé peut nécessiter de désinstaller cette version. Pas de collecte de données ou de compte requis par le jeu.
 
@@ -92,4 +104,4 @@ jobs:
 
           Prototype original stylisé, pas un GTA complet. Le bouton plein écran dépend du support de la WebView. La visée au stick droit est disponible à pied, comme pour la manette.
           NOTES
-          gh release create v1.4.0 release/*.apk release/SHA256-Android.txt --target "$GITHUB_SHA" --title "Pacific Drive v1.4.0 — Android tablette" --notes-file notes.md --prerelease
+          gh release create v1.4.1 release/*.apk release/SHA256-Android.txt release/game-*.png --target "$GITHUB_SHA" --title "Pacific Drive v1.4.1 — Android tablette" --notes-file notes.md --prerelease

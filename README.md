@@ -1,115 +1,148 @@
-# Pacific Drive
+<div align="center">
 
-Prototype de jeu de conduite en monde ouvert, à l’identité originale, développé avec Three.js et Vite. Aucun asset de GTA n’est utilisé.
+# PACIFIC DRIVE
+### Palm Coast est à vous.
 
-## Lancer
+Un prototype original de conduite et d’exploration en 3D, développé avec **Three.js**, **Electron** et **Capacitor**. Conduisez, explorez à pied et entraînez-vous au tir dans une ville côtière stylisée.
+
+**[Android / Xiaomi Pad 7](https://github.com/azzoxMXYT/Grand-Three-Auto/releases/tag/v1.4.1)** · **[Windows](https://github.com/azzoxMXYT/Grand-Three-Auto/releases/tag/v1.3.0)** · **[Toutes les versions](https://github.com/azzoxMXYT/Grand-Three-Auto/releases)**
+
+![Pacific Drive : conduite dans Palm Coast](docs/screenshots/driving.png)
+
+*Capture réelle du jeu dans Chromium, mode Élevé. Pas une image promotionnelle générée.*
+
+</div>
+
+## Le jeu en images
+
+### Exploration à pied et armes
+
+![Exploration à pied, réticule et munitions](docs/screenshots/on-foot.png)
+
+*Capture réelle du prototype sur ordinateur, mode Élevé. Pistolet, carabine et cibles d’entraînement sont utilisables à pied.*
+
+### Version tablette
+
+![Interface tablette en paysage avec deux joysticks tactiles](docs/screenshots/tablet.png)
+
+*Capture Chromium simulant une tablette 1280 × 800 en mode ÉCO. Ce n’est pas une capture prise sur une Xiaomi physique.*
+
+## Télécharger et jouer
+
+| Plateforme | Version | Fichier / démarrage |
+| --- | --- | --- |
+| **Android — Xiaomi Pad 7 et tablettes compatibles** | [v1.4.1](https://github.com/azzoxMXYT/Grand-Three-Auto/releases/tag/v1.4.1) | Télécharger `Pacific-Drive-1.4.1-Android-Test.apk`, l’ouvrir sur la tablette et suivre les instructions Android. Paysage, tactile et manettes. |
+| **Windows 10/11 x64** | [v1.3.0](https://github.com/azzoxMXYT/Grand-Three-Auto/releases/tag/v1.3.0) | `Installation-x64.exe` pour installer avec raccourcis, ou `Portable-x64.exe` sans installation. |
+| **Navigateur, ancienne version autonome** | [v1.1.0](https://github.com/azzoxMXYT/Grand-Three-Auto/releases/tag/v1.1.0) | Ouvrir `Pacific-Drive-Navigateur.html` avec Edge/Chrome. Cette ancienne version ne contient pas les dernières améliorations tactiles/manette. |
+
+Les ressources sont embarquées dans les applications : pas de serveur, de compte ou de téléchargement supplémentaire nécessaire pour jouer après installation. Un fichier SHA-256 accompagne les applications pour vérifier leur intégrité ; ce n’est pas une signature d’éditeur.
+
+> **Versions de développement :** les EXE Windows sont non signés et l’APK Android est débogable, signé avec une clé de test — pas une version Google Play. Defender, SmartScreen ou Play Protect peuvent avertir ou bloquer. **Ne désactivez pas ces protections et ne contournez pas une règle administrateur.** Une nouvelle compilation Android signée avec une autre clé de test peut nécessiter de désinstaller l’ancienne version.
+
+## Ce que vous pouvez faire
+
+- Parcourir une ville côtière procédurale : bâtiments, palmiers, enseignes, bord de mer et circulation simplifiée.
+- Conduire la Vapor GT ou descendre pour explorer à pied.
+- Rejoindre les balises jaunes : **2 500 $** par rendez-vous, trois destinations récurrentes.
+- Alterner entre pistolet et carabine, viser, tirer et recharger.
+- Détruire les cibles orange près de l’avenue de départ : trois impacts, **150 $**, réapparition après six secondes.
+- Choisir le mode ÉCO ou Élevé et plusieurs vues en voiture.
+
+**Périmètre :** prototype stylisé original, sans assets de GTA. Ce n’est pas un GTA V complet : pas de sauvegarde, multijoueur, intérieurs, audio, combat contre des PNJ ou dégâts aux véhicules. Le tir est disponible à pied seulement.
+
+## 🎮 Jouer à la manette — Android et ordinateur
+
+### Connexion sur Xiaomi Pad 7
+
+1. Associez votre manette dans les réglages **Bluetooth** d’Android, ou connectez une manette USB reconnue avec un adaptateur adapté.
+2. Ouvrez Pacific Drive et **appuyez sur un bouton** de la manette dans le jeu.
+3. L’indicateur en haut à droite doit afficher **MANETTE CONNECTÉE**.
+4. Le tactile reste disponible. Les entrées sont remises à zéro à la déconnexion ou à la perte de focus.
+
+La v1.4.1 ajoute un **adaptateur Android natif** pour les contrôleurs reconnus par Android, en complément de l’API Gamepad de la WebView. Il transmet sticks, gâchettes et boutons au jeu sans permission Bluetooth spéciale : l’association reste gérée par Android.
+
+Les dispositions Xbox et PlayStation ci-dessous sont des correspondances de boutons ; **tous les modèles, pilotes ou modes de connexion ne sont pas garantis**. Sur ordinateur/navigateur, un mapping Gamepad API `standard` reste nécessaire. Pas de vibration ni de remappage dans cette version.
+
+| Action | Xbox | PlayStation |
+| --- | --- | --- |
+| Bouger à pied / tourner en voiture | Stick gauche | Stick gauche |
+| Accélérer / reculer en voiture | RT / LT | R2 / L2 |
+| Orienter la visée à pied | Stick droit | Stick droit |
+| Tirer / rapprocher la visée à pied | RT / LT | R2 / L2 |
+| Entrer / sortir du véhicule | Y | Triangle |
+| Recharger | X | Carré |
+| Changer d’arme | RB | R1 |
+| Courir à pied / frein à main | A | Croix |
+| Changer de vue en voiture | View / Select | Share / Create |
+| Pause / reprendre | Menu / Start | Options |
+
+**Dépannage :** vérifiez d’abord que la manette est reconnue dans Android, revenez au jeu et appuyez sur un bouton. Si rien ne se passe, indiquez le modèle exact de la manette, la version d’Android et le mode Bluetooth/USB. Ne confondez pas cette prise en charge avec une certification matérielle : aucun test avec manette physique ou Xiaomi Pad 7 réelle n’a été effectué ici.
+
+## Commandes tactiles
+
+- **Joystick gauche** : marcher ; en voiture, haut = accélérer, bas = reculer, gauche/droite = tourner.
+- **Joystick droit** : orienter la visée à pied.
+- **Véhicule**, **Arme**, **Recharger**, **Vue** : actions indiquées.
+- Maintenir **Tirer**, **Viser**, **Courir / frein** pour l’action correspondante.
+- Bouton pause en haut à droite ; plein écran selon le support du navigateur/WebView.
+
+Deux doigts peuvent actionner les sticks simultanément. Relâchement, interruption tactile et changement d’application réinitialisent les entrées.
+
+## Clavier et souris
+
+| Action | Commande |
+| --- | --- |
+| Bouger / conduire | ZQSD, WASD ou flèches |
+| Entrer / sortir du véhicule | E |
+| Freiner | Espace |
+| Courir à pied | Maj |
+| Tirer à pied | Clic gauche |
+| Viser à pied | Clic droit maintenu + souris |
+| Recharger / replacer la voiture | R à pied / R en voiture |
+| Changer d’arme | F |
+| Changer de caméra | C |
+| Pause | Échap |
+
+## Graphismes et compatibilité
+
+**ÉCO par défaut :** résolution interne plafonnée à 1280 × 720 et à 85 % de la fenêtre, sans ombres, MSAA ou génération de reflets d’environnement au lancement. Ciel et eau simplifiés, neuf véhicules de circulation, géométries statiques et véhicules regroupés. Interface à la résolution native.
+
+**Élevé, activable manuellement :** ciel atmosphérique, eau animée, carrosserie vernie, vitres avec reflets d’environnement précalculés (pas des reflets temps réel de la ville), ombres, résolution jusqu’à 1,5×.
+
+Plafonds : **30 images/s en ÉCO**, **60 en Élevé**, **10 en pause**. Ce sont des limites, pas des performances garanties. WebGL 2 et un pilote/WebView compatibles sont nécessaires. Android 7 minimum ; applications Windows x64. Le mode ÉCO vise notamment les circuits graphiques intégrés et la limitation de chauffe sur tablette, sans benchmark sur votre appareil.
+
+## Développer et compiler
+
+Prérequis web / Windows : **Node.js 22**, npm et Git.
 
 ```sh
-npm install
-npm run dev
-```
-
-Ouvrir l’URL affichée par Vite. `npm run build` génère la version de production.
-
-## Commandes
-
-- ZQSD, WASD ou flèches : conduire / marcher
-- E : sortir du véhicule ou y entrer à proximité
-- Espace : freiner
-- Maj : courir à pied
-- C : changer de caméra
-- R : replacer le véhicule au départ
-- Échap : pause
-
-Des commandes tactiles sont également disponibles sur petit écran.
-
-Rejoignez les balises jaunes pour gagner 2 500 $ et débloquer la destination suivante. Le bouton de mission permet de masquer ou d’afficher l’itinéraire sur la mini-carte.
-
-## Périmètre
-
-Ville procédurale stylisée, collisions avec les bâtiments, circulation simplifiée, trois destinations récurrentes et trois vues caméra. Ce prototype n’est pas un jeu de l’ampleur de GTA V : pas de sauvegarde, de multijoueur, d’intérieurs, de combats ou d’audio. WebGL est nécessaire.
-
-## Télécharger le jeu Windows (.exe)
-
-Dépôt : https://github.com/azzoxMXYT/Grand-Three-Auto
-
-1. Ouvrez l’onglet **Actions**, puis **Version Windows**.
-2. Ouvrez la dernière compilation réussie de la branche `arena/e83fd17f-grand-three-auto`.
-3. Dans **Artifacts**, téléchargez **Pacific-Drive-Windows-x64** (connexion GitHub requise ; conservé 30 jours).
-4. Décompressez le ZIP et lancez `Pacific-Drive-1.0.0-Windows-x64.exe` sur Windows 10/11 64 bits.
-
-L’exécutable portable n’a pas besoin d’installation, de Node.js, de serveur ou de droits administrateur. Tous les assets du jeu sont inclus. La première ouverture peut prendre quelques secondes. La touche F11 permet de passer en plein écran avec Electron.
-
-### Compiler soi-même sur Windows
-
-Avec Node.js 22 et Git installés :
-
-```powershell
 git clone --branch arena/e83fd17f-grand-three-auto https://github.com/azzoxMXYT/Grand-Three-Auto.git
 cd Grand-Three-Auto
 npm ci
-npm run dist:win
+npm run dev
 ```
 
-Le fichier `.exe` est placé dans `release/`. `npm run desktop` lance le jeu dans une fenêtre de bureau sans empaquetage.
-
-### Sécurité et avertissements Windows
-
-Cette version de développement **n’est pas signée**. Ni l’absence d’alerte Defender, ni l’absence d’avertissement SmartScreen ne peut être garantie. Ces deux mécanismes sont différents. Aucune protection Windows n’est désactivée ou contournée par ce projet. Le jeu n’utilise ni obfuscateur ni script de téléchargement à l’exécution et la fenêtre n’a pas accès à Node.js. Une somme SHA-256 accompagne chaque compilation pour vérifier l’intégrité du téléchargement (ce n’est pas une signature numérique).
-
-Pour une distribution publique, l’éditeur devra signer les binaires avec un certificat de signature de code reconnu ou un service de signature approuvé, et soumettre à Microsoft les éventuels faux positifs. Ne désactivez pas l’antivirus et n’ajoutez pas d’exclusion pour lancer un fichier signalé.
-
-## Version 1.1 : manettes et armes
-
-À pied : **clic gauche** pour tirer, **clic droit maintenu + souris** pour viser, **R** pour recharger, **F** pour alterner pistolet / carabine. Le réticule indique la direction réelle des tirs. Les cibles orange sur l’avenue de départ encaissent trois impacts, rapportent 150 $ et réapparaissent après six secondes. Chargeurs et réserves séparés par arme. Pas de tir en voiture, de dégâts aux véhicules ou de combat contre des PNJ.
-
-Manettes à **mapping standard Gamepad API** : branchez la manette et appuyez sur un bouton dans la fenêtre du jeu. Xbox et PlayStation peuvent être reconnues selon le pilote, le navigateur et le mode de connexion ; les mappings non standard ne sont pas gérés.
-
-| Action | Manette |
+| Commande | Résultat |
 | --- | --- |
-| Bouger / direction | Stick gauche |
-| Accélérer / reculer en voiture | RT / LT |
-| Viser à pied | Stick droit ; LT pour rapprocher la caméra |
-| Tirer à pied | RT |
-| Véhicule | Y / triangle |
-| Recharger | X / carré |
-| Changer d’arme | RB / R1 |
-| Courir / frein à main | A / croix |
-| Pause / reprendre | Start / Options |
-| Changer de vue en voiture | Select / Share |
+| `npm test` | Tests unitaires des entrées, manettes, joysticks et limites de rendu |
+| `npm run build` | Jeu web dans `dist/` |
+| `npm run build:html` | Fichier HTML autonome dans `release/` |
+| `npm run desktop` | Fenêtre Electron locale |
+| `npm run dist:win` | Installateur et portable dans `release/` ; à lancer sur Windows |
+| `npm run android:sync` | Compilation web et synchronisation Capacitor |
 
-L’indicateur en haut à droite confirme la connexion. La déconnexion libère les entrées de la manette. `npm test` vérifie la zone morte, les actions sur pression, la pause et la déconnexion simulée. Le test avec manettes physiques et le test manuel de l’exécutable Windows restent à effectuer.
+**Android :** JDK 21 et SDK Android 36, puis `npm run android:sync`, `cd android`, `./gradlew assembleDebug` (Windows : `gradlew.bat assembleDebug`). APK : `android/app/build/outputs/apk/debug/app-debug.apk`. Les clés de signature sont exclues de Git.
 
-## Jouer sans exécutable Windows
+### Tests et captures reproductibles
 
-Téléchargez **Pacific-Drive-Navigateur.html** dans la release v1.1.0, puis ouvrez le fichier avec Edge ou Chrome. Le jeu, son code et ses styles sont regroupés dans ce seul fichier ; aucun serveur ni installation ne sont nécessaires. WebGL et l’accélération graphique restent nécessaires. Selon le navigateur, la manette peut nécessiter un contexte HTTPS : dans ce cas, utilisez le clavier/souris ou l’aperçu HTTPS Arena.
+Les workflows GitHub Actions compilent les applications. Playwright vérifie le rendu, les commandes tactiles simultanées, le tir, le changement d’arme, la pause et l’adaptateur manette Android simulé. La compilation Java vérifie le code natif ; elle ne remplace pas un essai Bluetooth/USB sur appareil.
 
-Cette version navigateur n’enlève ni ne contourne une protection Windows. Si une politique d’entreprise interdit aussi ces fichiers ou le navigateur, contactez l’administrateur. Aucun résultat d’analyse antivirus n’est garanti. Le `.exe` reste non signé.
+Avec le serveur Vite lancé et Chromium installé (`npx playwright install chromium`) :
 
-Pour reconstruire le fichier : `npm ci`, puis `npm run build:html`. Résultat : `release/Pacific-Drive-Navigateur.html`.
+```sh
+node scripts/browser-smoke.mjs
+node scripts/tablet-smoke.mjs
+node scripts/capture-game.mjs
+```
 
-## Version 1.2 : rendu et installateur Windows
-
-La release v1.2.0 propose deux exécutables : **Installation-x64.exe** (installation par utilisateur, dossier configurable, raccourcis et désinstallation) et **Portable-x64.exe** (sans installation). Le jeu embarque ses ressources et ne dépend pas d’un serveur.
-
-Rendu : ciel atmosphérique, océan animé, asphalte texturé, carrosserie vernie et vitres avec reflets d’environnement précalculés (pas des reflets temps réel de la ville), enseignes et mobilier du bord de mer. Le bouton **Graphismes** alterne entre le rendu élevé (ombres et résolution jusqu’à 2×) et le mode performance (sans ombres, résolution 1×).
-
-Cela reste une ville stylisée de prototype et non un jeu complet de la qualité de GTA V. L’installateur ne constitue pas une correction du blocage Defender : les exécutables sont toujours non signés, et toute politique de sécurité Windows reste applicable. Aucun certificat de signature n’est fourni avec ce dépôt.
-
-Le workflow Windows lance d’abord un test Chromium/WebGL du rendu, du tir à pied et du bouton de qualité. Il conserve une capture dans l’artefact `Graphics-smoke`. Le test manuel Windows et manette physique reste à effectuer.
-
-## Version 1.3 : démarrage ÉCO (Intel intégré / environ 8 Go RAM)
-
-Le jeu démarre toujours en **ÉCO**, sans supposer le modèle de votre GPU : ombres et MSAA désactivés, pas de génération de reflets au lancement, ciel et eau simplifiés, neuf voitures de circulation et regroupement des géométries des véhicules. Résolution interne plafonnée à 1280 × 720 et à 85 % de la taille de fenêtre ; interface à la résolution native. Fenêtre de bureau initiale limitée à 1280 × 720 et à la zone de travail de l’écran.
-
-Le rendu est plafonné à **30 images/s** en ÉCO et **10 en pause** pour réduire les calculs inutiles. Le mode Élevé est réactivable avec le bouton Graphismes (maximum 60 images/s, résolution jusqu’à 1,5×, ombres et effets). Un plafond n’est pas un débit garanti.
-
-La capture d’un gestionnaire des tâches montrant « Intel Graphics » et environ 8 Go de mémoire ne permet pas de certifier la compatibilité : modèle du GPU, processeur, pilotes et prise en charge WebGL 2 restent déterminants. Aucun benchmark n’a été réalisé sur le PC de l’utilisateur. Fermez les applications inutilisées pour libérer de la RAM. Si le rendu reste noir ou lent, indiquez le modèle du processeur et du GPU, ainsi que le message d’erreur éventuel. Ne désactivez pas les protections Windows : ces réglages ne corrigent pas un blocage de sécurité.
-
-## Version 1.4 : Android tablette / Xiaomi Pad 7
-
-Projet Android Capacitor dans `android/`. APK de test en paysage, joysticks multitouch gauche (bouger / conduire) et droit (viser à pied), commandes véhicule, arme, tir, visée, rechargement, course/frein et caméra. En voiture, poussez le stick gauche vers le haut pour accélérer, vers le bas pour reculer et latéralement pour tourner. ÉCO par défaut pour limiter charge et chauffe, sans garantie de fluidité sur un appareil particulier. La manette physique standard reste disponible si reconnue par la WebView.
-
-L’APK embarque le jeu ; pas de serveur requis. Android 7 minimum et WebView avec WebGL 2 nécessaires. La version distribuée est **débogable et signée avec une clé de test**, pas une version de production ou Google Play. Les clés de signature ne sont pas enregistrées dans Git. Désinstaller peut être nécessaire entre deux compilations signées avec des clés de test différentes. Ne désactivez pas Play Protect et ne contournez pas une politique de gestion de tablette.
-
-Compilation locale : Node.js 22, JDK 21, SDK Android 36 puis `npm ci`, `npm run android:sync`, `cd android` et `./gradlew assembleDebug` (Windows : `gradlew.bat assembleDebug`). APK : `android/app/build/outputs/apk/debug/app-debug.apk`. Le workflow `Android tablette` compile, vérifie la signature et publie l’APK v1.4.0. Le smoke test simule une tablette dans Chromium ; pas de test matériel Xiaomi effectué.
+Les images du README proviennent de `scripts/capture-game.mjs` et sont enregistrées dans `docs/screenshots/`. Les deux captures ordinateur utilisent le mode Élevé ; la capture tablette utilise le mode ÉCO. Aucun montage ni rendu généré hors du jeu.

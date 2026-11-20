@@ -68,6 +68,34 @@ try {
   await page.locator("#pause").tap();
   assert.equal(await page.locator("#pauseScreen").isVisible(), true);
   await page.locator("#resume").tap();
+  await page.evaluate(() => {
+    const buttons = Array(17).fill(0);
+    buttons[7] = 1;
+    window.dispatchEvent(
+      new CustomEvent("pacific-native-gamepad", {
+        detail: { connected: true, id: 7, axes: [0, 0, 0, 0], buttons },
+      }),
+    );
+  });
+  await page.waitForFunction(() =>
+    document
+      .querySelector("#padStatus")
+      .textContent.includes("● MANETTE CONNECTÉE"),
+  );
+  await page.waitForFunction(
+    () =>
+      !document.querySelector("#weaponHud").textContent.includes("30 / 180"),
+  );
+  await page.evaluate(() =>
+    window.dispatchEvent(
+      new CustomEvent("pacific-native-gamepad", {
+        detail: { connected: false },
+      }),
+    ),
+  );
+  await page.waitForFunction(() =>
+    document.querySelector("#padStatus").textContent.includes("○ TACTILE"),
+  );
   await page.screenshot({ path: "release/tablet-smoke.png", timeout: 90000 });
   assert.deepEqual(errors, []);
   console.log("Tablet multi-touch, fire, weapon and pause passed.");

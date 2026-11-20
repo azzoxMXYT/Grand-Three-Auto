@@ -3,23 +3,60 @@ export function deadzone(value = 0, threshold = 0.18) {
     ? 0
     : (Math.sign(value) * (Math.abs(value) - threshold)) / (1 - threshold);
 }
+export function nativeGamepad(detail) {
+  if (
+    !detail?.connected ||
+    !Array.isArray(detail.axes) ||
+    !Array.isArray(detail.buttons)
+  )
+    return null;
+  const clamp = (value, min, max) =>
+    Number.isFinite(value) ? Math.max(min, Math.min(max, value)) : 0;
+  return {
+    mapping: "standard",
+    index: `android-${detail.id}`,
+    axes: Array.from({ length: 4 }, (_, i) => clamp(detail.axes[i], -1, 1)),
+    buttons: Array.from({ length: 17 }, (_, i) => {
+      const value = clamp(detail.buttons[i], 0, 1);
+      return { value, pressed: value > 0.15 };
+    }),
+  };
+}
 export function createGamepadInput(actions) {
   let previous = [],
-    connected = false;
+    connected = null;
   const status = document.querySelector("#padStatus");
+  let native = null,
+    activeId = null;
+  globalThis.addEventListener?.("pacific-native-gamepad", (event) => {
+    native = nativeGamepad(event.detail);
+  });
+  globalThis.addEventListener?.("blur", () => {
+    native = null;
+    previous = [];
+  });
   return function poll(enabled) {
-    const pad = Array.from(navigator.getGamepads?.() || []).find(
-      (p) => p?.mapping === "standard",
-    );
+    const pad =
+      native ||
+      Array.from(navigator.getGamepads?.() || []).find(
+        (p) => p?.mapping === "standard",
+      );
     if (Boolean(pad) !== connected) {
       connected = Boolean(pad);
       status.textContent = connected
         ? "● MANETTE CONNECTÉE"
-        : "○ CLAVIER / SOURIS";
+        : globalThis.matchMedia?.("(pointer:coarse)").matches
+          ? "○ TACTILE · MANETTE : APPUYEZ SUR UN BOUTON"
+          : "○ CLAVIER / SOURIS";
     }
     if (!pad) {
       previous = [];
       return {};
+    }
+    const id = pad.index ?? 0;
+    if (id !== activeId) {
+      previous = [];
+      activeId = id;
     }
     const buttons = pad.buttons.map((b) => b.pressed);
     const press = (i) => buttons[i] && !previous[i];
