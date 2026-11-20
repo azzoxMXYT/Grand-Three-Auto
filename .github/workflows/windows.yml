@@ -1,0 +1,40 @@
+name: Version Windows
+
+on:
+  push:
+    branches: ['arena/e83fd17f-grand-three-auto', 'main']
+    paths-ignore: ['**.md']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Compiler le jeu Windows x64
+        run: npm run dist:win
+      - name: Calculer la somme de contrôle SHA-256
+        shell: pwsh
+        run: |
+          Get-ChildItem release/*.exe | ForEach-Object {
+            $hash = (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower()
+            "$hash  $($_.Name)" | Out-File -FilePath "release/SHA256SUMS.txt" -Encoding utf8 -Append
+          }
+      - name: Publier le téléchargement
+        uses: actions/upload-artifact@v4
+        with:
+          name: Pacific-Drive-Windows-x64
+          path: |
+            release/*.exe
+            release/SHA256SUMS.txt
+          if-no-files-found: error
+          retention-days: 30
