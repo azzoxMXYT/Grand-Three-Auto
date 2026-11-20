@@ -20,7 +20,21 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
-      - name: Préparer le SDK Android fourni par le runner
+      - name: Installer les outils officiels Android
+        run: |
+          export ANDROID_HOME="$RUNNER_TEMP/android-sdk"
+          mkdir -p "$ANDROID_HOME/cmdline-tools"
+          curl --fail --location --retry 3 https://dl.google.com/android/repository/commandlinetools-linux-13114758_latest.zip -o /tmp/android-tools.zip
+          unzip -q /tmp/android-tools.zip -d /tmp/android-tools
+          mv /tmp/android-tools/cmdline-tools "$ANDROID_HOME/cmdline-tools/latest"
+          echo "ANDROID_HOME=$ANDROID_HOME" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> "$GITHUB_ENV"
+          echo "$ANDROID_HOME/cmdline-tools/latest/bin" >> "$GITHUB_PATH"
+          python3 - <<'PY'
+          import os, subprocess
+          subprocess.run([os.environ['ANDROID_HOME']+'/cmdline-tools/latest/bin/sdkmanager','--licenses'],input='y\n'*100,text=True,check=True)
+          PY
+      - name: Préparer le SDK Android
         run: |
           set +e
           sdkmanager "platforms;android-36" "build-tools;36.0.0" > /tmp/sdk.log 2>&1
