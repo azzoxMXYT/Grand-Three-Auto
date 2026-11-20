@@ -97,3 +97,11 @@ Rendu : ciel atmosphérique, océan animé, asphalte texturé, carrosserie verni
 Cela reste une ville stylisée de prototype et non un jeu complet de la qualité de GTA V. L’installateur ne constitue pas une correction du blocage Defender : les exécutables sont toujours non signés, et toute politique de sécurité Windows reste applicable. Aucun certificat de signature n’est fourni avec ce dépôt.
 
 Le workflow Windows lance d’abord un test Chromium/WebGL du rendu, du tir à pied et du bouton de qualité. Il conserve une capture dans l’artefact `Graphics-smoke`. Le test manuel Windows et manette physique reste à effectuer.
+
+## Version 1.3 : démarrage ÉCO (Intel intégré / environ 8 Go RAM)
+
+Le jeu démarre toujours en **ÉCO**, sans supposer le modèle de votre GPU : ombres et MSAA désactivés, pas de génération de reflets au lancement, ciel et eau simplifiés, neuf voitures de circulation et regroupement des géométries des véhicules. Résolution interne plafonnée à 1280 × 720 et à 85 % de la taille de fenêtre ; interface à la résolution native. Fenêtre de bureau initiale limitée à 1280 × 720 et à la zone de travail de l’écran.
+
+Le rendu est plafonné à **30 images/s** en ÉCO et **10 en pause** pour réduire les calculs inutiles. Le mode Élevé est réactivable avec le bouton Graphismes (maximum 60 images/s, résolution jusqu’à 1,5×, ombres et effets). Un plafond n’est pas un débit garanti.
+
+La capture d’un gestionnaire des tâches montrant « Intel Graphics » et environ 8 Go de mémoire ne permet pas de certifier la compatibilité : modèle du GPU, processeur, pilotes et prise en charge WebGL 2 restent déterminants. Aucun benchmark n’a été réalisé sur le PC de l’utilisateur. Fermez les applications inutilisées pour libérer de la RAM. Si le rendu reste noir ou lent, indiquez le modèle du processeur et du GPU, ainsi que le message d’erreur éventuel. Ne désactivez pas les protections Windows : ces réglages ne corrigent pas un blocage de sécurité.

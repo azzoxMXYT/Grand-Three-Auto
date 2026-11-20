@@ -1,20 +1,25 @@
 import * as THREE from "three";
+import { renderScale } from "./quality.js";
 import { Sky } from "three/addons/objects/Sky.js";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 
 // All scenery is procedural. No remote textures or downloads at runtime.
 export function setupGraphics(scene, renderer, sun) {
-  const pmrem = new THREE.PMREMGenerator(renderer);
-  const room = new RoomEnvironment();
-  const environment = pmrem.fromScene(room, 0.04);
-  scene.environment = environment.texture;
-  room.dispose();
-  pmrem.dispose();
+  let environment;
+  function prepareEnvironment() {
+    if (environment) return;
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    const room = new RoomEnvironment();
+    environment = pmrem.fromScene(room, 0.04);
+    room.dispose();
+    pmrem.dispose();
+  }
   renderer.toneMappingExposure = 0.95;
   scene.fog = new THREE.FogExp2("#b9cbd0", 0.0037);
   const sky = new Sky();
   sky.scale.setScalar(2000);
   scene.add(sky);
+  sky.visible = false;
   Object.assign(sky.material.uniforms.turbidity, { value: 3 });
   sky.material.uniforms.rayleigh.value = 1.4;
   sky.material.uniforms.mieCoefficient.value = 0.004;
@@ -42,7 +47,7 @@ export function setupGraphics(scene, renderer, sun) {
   asphalt.wrapS = asphalt.wrapT = THREE.RepeatWrapping;
   asphalt.repeat.set(2, 12);
   asphalt.colorSpace = THREE.SRGBColorSpace;
-  asphalt.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+  asphalt.anisotropy = Math.min(2, renderer.capabilities.getMaxAnisotropy());
 
   const water = new THREE.Mesh(
     new THREE.PlaneGeometry(398, 1498),
@@ -62,19 +67,38 @@ export function setupGraphics(scene, renderer, sun) {
   scene.add(water);
   const settings = document.createElement("button");
   settings.id = "graphicsSettings";
-  settings.textContent = "GRAPHISMES : ÉLEVÉS";
-  settings.title = "Changer la qualité graphique";
+  settings.title = "Mode ÉCO recommandé pour Intel intégré / 8 Go de RAM";
   document.body.appendChild(settings);
-  let high = true;
-  settings.onclick = () => {
-    high = !high;
-    renderer.setPixelRatio(Math.min(devicePixelRatio, high ? 2 : 1));
+  const animatedWater = water.material;
+  const simpleWater = new THREE.MeshBasicMaterial({ color: "#397e88" });
+  let high = false;
+  function resize() {
+    renderer.setPixelRatio(
+      renderScale(innerWidth, innerHeight, devicePixelRatio, high),
+    );
+    renderer.setSize(innerWidth, innerHeight);
+  }
+  function apply() {
+    if (high) prepareEnvironment();
+    scene.environment = high ? environment.texture : null;
+    sky.visible = high;
+    water.material = high ? animatedWater : simpleWater;
     renderer.shadowMap.enabled = high;
+    scene.fog.density = high ? 0.0037 : 0.006;
     scene.traverse((o) => {
       if (o.isMesh && o.material) o.material.needsUpdate = true;
     });
-    settings.textContent = `GRAPHISMES : ${high ? "ÉLEVÉS" : "PERFORMANCE"}`;
+    settings.textContent = high
+      ? "GRAPHISMES : ÉLEVÉS · 60 IPS MAX"
+      : "GRAPHISMES : ÉCO · 30 IPS MAX";
+    settings.dataset.mode = high ? "high" : "eco";
+    resize();
+  }
+  settings.onclick = () => {
+    high = !high;
+    apply();
   };
+  apply();
   return {
     material(color) {
       const m = new THREE.MeshStandardMaterial({ color, roughness: 0.8 });
@@ -99,7 +123,11 @@ export function setupGraphics(scene, renderer, sun) {
       return m;
     },
     update(dt) {
-      water.material.uniforms.time.value += dt;
+      if (high) animatedWater.uniforms.time.value += dt;
+    },
+    resize,
+    get high() {
+      return high;
     },
   };
 }

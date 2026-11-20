@@ -1,3 +1,4 @@
+import { frameInterval } from "./quality.js";
 import * as THREE from "three";
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 import "./style.css";
@@ -11,10 +12,13 @@ import {
 const scene = new THREE.Scene();
 scene.background = new THREE.Color("#accacd");
 scene.fog = new THREE.Fog("#accacd", 100, 360);
-const renderer = new THREE.WebGLRenderer({ antialias: true });
+const renderer = new THREE.WebGLRenderer({
+  antialias: false,
+  powerPreference: "low-power",
+});
 renderer.setSize(innerWidth, innerHeight);
-renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-renderer.shadowMap.enabled = true;
+renderer.setPixelRatio(Math.min(devicePixelRatio, 0.85));
+renderer.shadowMap.enabled = false;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.25;
@@ -29,7 +33,7 @@ scene.add(new THREE.HemisphereLight("#e9f6ff", "#77765b", 2.5));
 const sun = new THREE.DirectionalLight("#fff0c9", 3.3);
 sun.position.set(-80, 130, 65);
 sun.castShadow = true;
-sun.shadow.mapSize.set(2048, 2048);
+sun.shadow.mapSize.set(1024, 1024);
 Object.assign(sun.shadow.camera, {
   left: -120,
   right: 120,
@@ -205,6 +209,7 @@ function car(color) {
   }
   box(1.9, 0.12, 0.15, "#344548", 0, 0.4, -2.23, g);
   box(0.6, 0.2, 0.04, "#e6e3cf", 0, 0.55, -2.32, g);
+  optimizeStaticScene(g, mergeGeometries);
   scene.add(g);
   return g;
 }
@@ -225,7 +230,7 @@ for (const x of [-0.4, 0.4]) box(0.18, 0.7, 0.2, "#a77d60", x, 1.1, 0, person);
 person.visible = false;
 scene.add(person);
 const traffic = [];
-for (let i = 0; i < 17; i++) {
+for (let i = 0; i < 9; i++) {
   const c = car(["#e1c7ab", "#647f85", "#c08063", "#dde0d0", "#738e77"][i % 5]);
   const vertical = i % 2 === 0,
     lane = roads[Math.floor(rand() * 5)] + (i % 3 === 0 ? -4 : 4);
@@ -457,9 +462,13 @@ function blocked(x, z) {
     buildings.some((b) => Math.abs(x - b.x) < b.w && Math.abs(z - b.z) < b.d)
   );
 }
-function frame() {
+let lastFrame = 0;
+function frame(now = performance.now()) {
   requestAnimationFrame(frame);
-  const dt = Math.min(clock.getDelta(), 0.04);
+  const interval = frameInterval(graphics.high, paused);
+  if (now - lastFrame < interval - 1) return;
+  lastFrame = now - ((now - lastFrame) % interval);
+  const dt = Math.min(clock.getDelta(), 0.05);
   const pad = pollPad(!paused);
   if (!paused) {
     graphics.update(dt);
@@ -606,7 +615,7 @@ frame();
 window.addEventListener("resize", () => {
   camera.aspect = innerWidth / innerHeight;
   camera.updateProjectionMatrix();
-  renderer.setSize(innerWidth, innerHeight);
+  graphics.resize();
 });
 setTimeout(
   () => toast("ZQSD pour conduire · E pour sortir · C pour changer de vue"),

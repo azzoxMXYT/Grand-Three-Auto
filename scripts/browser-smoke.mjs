@@ -15,6 +15,10 @@ try {
   });
   await page.goto("http://localhost:5173/");
   await page.waitForSelector("#graphicsSettings");
+  assert.equal(
+    await page.locator("#graphicsSettings").getAttribute("data-mode"),
+    "eco",
+  );
   await page.waitForTimeout(2000);
   await page.keyboard.press("e");
   await page.waitForTimeout(300);
@@ -28,11 +32,12 @@ try {
   assert.match(await page.locator("#weaponHud").textContent(), /11 \/ 120/);
   await page.locator("#graphicsSettings").click();
   await page.waitForTimeout(300);
-  assert.match(
-    await page.locator("#graphicsSettings").textContent(),
-    /PERFORMANCE/,
-  );
+  assert.match(await page.locator("#graphicsSettings").textContent(), /ÉLEVÉS/);
   await page.locator("#graphicsSettings").click();
+  assert.equal(
+    await page.locator("#graphicsSettings").getAttribute("data-mode"),
+    "eco",
+  );
   await page.screenshot({ path: "release/graphics-smoke.png", timeout: 90000 });
   assert.deepEqual(errors, [], "Browser or shader errors");
   console.log("Rendering, on-foot shooting and quality switch passed.");

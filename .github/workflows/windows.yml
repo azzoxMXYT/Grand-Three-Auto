@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       publish:
-        description: Publier la préversion v1.2.0
+        description: Publier la préversion v1.3.0
         type: boolean
         default: false
 
@@ -72,19 +72,21 @@ jobs:
             release/SHA256SUMS.txt
           if-no-files-found: error
           retention-days: 30
-      - name: Publier la préversion v1.2.0
+      - name: Publier la préversion v1.3.0
         if: github.event_name == 'workflow_dispatch' && inputs.publish
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           cat > notes.md <<'NOTES'
-          ## Pacific Drive — graphismes et installation Windows
-          - Installateur Windows par utilisateur : choix du dossier, raccourcis bureau et menu Démarrer, désinstallation standard.
-          - Version portable également disponible, sans installation.
-          - Ciel atmosphérique, eau animée, peinture de carrosserie et vitres avec reflets d’environnement précalculés, asphalte texturé, végétation retravaillée, enseignes et mobilier côtier.
-          - Bouton de qualité Élevée / Performance pour adapter le rendu à votre PC.
-          - Conduite, exploration à pied, manettes standard, pistolet/carabine et cibles d’entraînement conservés. Échap pour les commandes.
+          ## Pacific Drive — mode ÉCO pour circuit graphique intégré
+          - Démarrage systématique en mode ÉCO : sans ombres, sans MSAA, sans génération de reflets PMREM, ciel et océan simplifiés.
+          - Résolution interne plafonnée à 1280 × 720 et 85 % de la fenêtre ; interface conservée à la taille native.
+          - Maximum 30 images/s en ÉCO, 10 en pause ; ce sont des plafonds, pas des performances garanties.
+          - Neuf véhicules de circulation, géométries des véhicules regroupées pour limiter les appels de rendu.
+          - Fenêtre initiale de 1280 × 720 au maximum, adaptée à la zone de travail de l’écran.
+          - Mode Élevé disponible manuellement : effets réactivés, 60 images/s maximum, résolution limitée à 1,5×.
+          - Conduite, armes, cibles, missions et manettes standard conservés.
 
           Téléchargez le fichier **Installation-x64.exe** pour installer le jeu, ou **Portable-x64.exe** pour le lancer sans installation. Windows 10/11 x64 avec accélération graphique requis. Tous les assets sont inclus.
 
@@ -92,6 +94,6 @@ jobs:
 
           **Sécurité :** exécutables non signés. Defender, SmartScreen ou une politique administrateur peuvent toujours bloquer leur lancement. Ce nouvel emballage ne supprime pas ces restrictions et ne désactive aucune protection. Pas de garantie d’absence d’alerte. Ne désactivez pas les protections Windows.
 
-          Tests automatisés du rendu WebGL, du tir et du changement de qualité avant compilation ; pas de validation manuelle sur Windows ni avec une manette physique.
+          Tests automatisés du rendu WebGL, du démarrage ÉCO, des plafonds de résolution, du tir et du changement de qualité. Pas de mesure sur votre PC Intel/8 Go : lancement et fluidité non garantis ; WebGL 2 et un pilote graphique compatible restent nécessaires. Pas de test manuel Windows ou manette physique.
           NOTES
-          gh release create v1.2.0 release/*.exe release/SHA256SUMS.txt --target "$GITHUB_SHA" --title "Pacific Drive v1.2.0 — Graphismes et installateur Windows" --notes-file notes.md --prerelease
+          gh release create v1.3.0 release/*.exe release/SHA256SUMS.txt --target "$GITHUB_SHA" --title "Pacific Drive v1.3.0 — Mode ÉCO Intel intégré" --notes-file notes.md --prerelease
