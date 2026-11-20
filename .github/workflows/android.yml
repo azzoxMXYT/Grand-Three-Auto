@@ -22,7 +22,18 @@ jobs:
           java-version: '21'
       - name: Préparer le SDK Android fourni par le runner
         run: |
-          sdkmanager "platforms;android-36" "build-tools;36.0.0"
+          set +e
+          sdkmanager "platforms;android-36" "build-tools;36.0.0" > /tmp/sdk.log 2>&1
+          code=$?
+          cat /tmp/sdk.log
+          if [ "$code" -ne 0 ]; then
+            python3 - <<'PY'
+          import pathlib
+          text=pathlib.Path('/tmp/sdk.log').read_text()
+          print('::error::'+text.replace('%','%25').replace('\n','%0A'))
+          PY
+            exit "$code"
+          fi
       - run: npm ci
       - run: npm test
       - run: npx playwright install --with-deps chromium
