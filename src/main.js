@@ -133,6 +133,14 @@ for (let gx = -2; gx < 2; gx++)
         }
       }
 addCityDetails({ scene, box, buildings });
+const leafMaterials = ["#63894e", "#527d59"].map(
+  (color) =>
+    new THREE.MeshStandardMaterial({
+      color,
+      side: THREE.DoubleSide,
+      roughness: 0.9,
+    }),
+);
 function palm(x, z) {
   const h = 7 + rand() * 4;
   const trunk = cylinder(0.17, 0.35, h, "#a08a65", x, h / 2, z);
@@ -148,11 +156,7 @@ function palm(x, z) {
     shape.quadraticCurveTo(-0.65, 1.3, 0, 0);
     const leaf = new THREE.Mesh(
       new THREE.ShapeGeometry(shape, 8),
-      new THREE.MeshStandardMaterial({
-        color: i % 2 ? "#527d59" : "#63894e",
-        side: THREE.DoubleSide,
-        roughness: 0.9,
-      }),
+      leafMaterials[i % 2],
     );
     leaf.rotation.set(-Math.PI / 2 + 0.22, a, 0);
     leaf.rotation.z = a;
