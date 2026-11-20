@@ -1,0 +1,24 @@
+name: Version navigateur autonome
+on:
+  push:
+    branches: ['arena/e83fd17f-grand-three-auto']
+    paths: ['scripts/standalone.mjs', '.github/workflows/browser.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build:html
+      - name: Joindre le jeu HTML à la release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload v1.1.0 release/Pacific-Drive-Navigateur.html --clobber

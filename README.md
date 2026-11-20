@@ -79,3 +79,11 @@ Manettes à **mapping standard Gamepad API** : branchez la manette et appuyez su
 | Changer de vue en voiture | Select / Share |
 
 L’indicateur en haut à droite confirme la connexion. La déconnexion libère les entrées de la manette. `npm test` vérifie la zone morte, les actions sur pression, la pause et la déconnexion simulée. Le test avec manettes physiques et le test manuel de l’exécutable Windows restent à effectuer.
+
+## Jouer sans exécutable Windows
+
+Téléchargez **Pacific-Drive-Navigateur.html** dans la release v1.1.0, puis ouvrez le fichier avec Edge ou Chrome. Le jeu, son code et ses styles sont regroupés dans ce seul fichier ; aucun serveur ni installation ne sont nécessaires. WebGL et l’accélération graphique restent nécessaires. Selon le navigateur, la manette peut nécessiter un contexte HTTPS : dans ce cas, utilisez le clavier/souris ou l’aperçu HTTPS Arena.
+
+Cette version navigateur n’enlève ni ne contourne une protection Windows. Si une politique d’entreprise interdit aussi ces fichiers ou le navigateur, contactez l’administrateur. Aucun résultat d’analyse antivirus n’est garanti. Le `.exe` reste non signé.
+
+Pour reconstruire le fichier : `npm ci`, puis `npm run build:html`. Résultat : `release/Pacific-Drive-Navigateur.html`.
