@@ -20,7 +20,11 @@ try {
   await page.waitForTimeout(300);
   assert.match(await page.locator("#weaponHud").textContent(), /PISTOLET/);
   await page.mouse.click(720, 450);
-  await page.waitForTimeout(300);
+  await page.waitForFunction(
+    () => document.querySelector("#weaponHud").textContent.includes("11 / 120"),
+    {},
+    { timeout: 15000 },
+  );
   assert.match(await page.locator("#weaponHud").textContent(), /11 \/ 120/);
   await page.locator("#graphicsSettings").click();
   await page.waitForTimeout(300);
@@ -33,7 +37,11 @@ try {
   assert.deepEqual(errors, [], "Browser or shader errors");
   console.log("Rendering, on-foot shooting and quality switch passed.");
 } catch (error) {
-  const details = [error.stack, ...browserErrors].join('\n').replace(/%/g, '%25').replace(/\r/g, '%0D').replace(/\n/g, '%0A');
+  const details = [error.stack, ...browserErrors]
+    .join("\n")
+    .replace(/%/g, "%25")
+    .replace(/\r/g, "%0D")
+    .replace(/\n/g, "%0A");
   console.error(`::error::${details}`);
   throw error;
 } finally {

@@ -19,6 +19,7 @@ export function createCombat({
     magazines = [12, 30],
     reloadTime = 0,
     cooldown = 0,
+    queuedShot = false,
     mouseFire = false,
     mouseAim = false,
     hits = 0;
@@ -85,7 +86,10 @@ export function createCombat({
   }
   canvas.addEventListener("pointerdown", (e) => {
     if (!isActive()) return;
-    if (e.button === 0) mouseFire = true;
+    if (e.button === 0) {
+      mouseFire = true;
+      queuedShot = true;
+    }
     if (e.button === 2) mouseAim = true;
   });
   window.addEventListener("pointerup", (e) => {
@@ -94,6 +98,7 @@ export function createCombat({
   });
   window.addEventListener("blur", () => {
     mouseFire = false;
+    queuedShot = false;
     mouseAim = false;
   });
   canvas.addEventListener("contextmenu", (e) => e.preventDefault());
@@ -189,7 +194,8 @@ export function createCombat({
         traces.splice(i, 1);
       }
     }
-    if (enabled && (mouseFire || input.fire)) shoot();
+    if (enabled && (queuedShot || mouseFire || input.fire)) shoot();
+    queuedShot = false;
     hud.textContent = `${weapons[selected].name}  ·  ${reloadTime ? "RECHARGEMENT…" : `${ammo} / ${reserve[selected]}`}  ·  CIBLES ${hits}`;
     return enabled && (mouseAim || input.aim);
   }
