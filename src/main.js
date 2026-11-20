@@ -1,8 +1,13 @@
 import * as THREE from "three";
+import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 import "./style.css";
 import { createGamepadInput } from "./input.js";
 import { createCombat } from "./combat.js";
-import { setupGraphics, addCityDetails } from "./graphics.js";
+import {
+  setupGraphics,
+  addCityDetails,
+  optimizeStaticScene,
+} from "./graphics.js";
 const scene = new THREE.Scene();
 scene.background = new THREE.Color("#accacd");
 scene.fog = new THREE.Fog("#accacd", 100, 360);
@@ -169,6 +174,7 @@ for (let i = 0; i < 20; i++) {
   mountain.position.set(-230 + i * 30, 15, -280 - rand() * 65);
   scene.add(mountain);
 }
+optimizeStaticScene(scene, mergeGeometries);
 function car(color) {
   const g = new THREE.Group();
   const paint = new THREE.MeshPhysicalMaterial({

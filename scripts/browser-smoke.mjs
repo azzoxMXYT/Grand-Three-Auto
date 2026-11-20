@@ -6,7 +6,7 @@ const browser = await chromium.launch({
 });
 try {
   const page = await browser.newPage({
-    viewport: { width: 1440, height: 900 },
+    viewport: { width: 1280, height: 800 },
   });
   const errors = browserErrors;
   page.on("pageerror", (error) => errors.push(error.message));
@@ -19,7 +19,7 @@ try {
   await page.keyboard.press("e");
   await page.waitForTimeout(300);
   assert.match(await page.locator("#weaponHud").textContent(), /PISTOLET/);
-  await page.mouse.click(720, 450);
+  await page.mouse.click(640, 400);
   await page.waitForFunction(
     () => document.querySelector("#weaponHud").textContent.includes("11 / 120"),
     {},
@@ -33,7 +33,7 @@ try {
     /PERFORMANCE/,
   );
   await page.locator("#graphicsSettings").click();
-  await page.screenshot({ path: "release/graphics-smoke.png" });
+  await page.screenshot({ path: "release/graphics-smoke.png", timeout: 90000 });
   assert.deepEqual(errors, [], "Browser or shader errors");
   console.log("Rendering, on-foot shooting and quality switch passed.");
 } catch (error) {

@@ -155,3 +155,36 @@ export function addCityDetails({ scene, box, buildings }) {
     scene.add(shrub);
   }
 }
+
+// Collapse thousands of static window/road/foliage meshes into material batches.
+// Vehicles, player, targets, sky and animated water remain independent.
+export function optimizeStaticScene(scene, mergeGeometries) {
+  scene.updateMatrixWorld(true);
+  const groups = new Map();
+  scene.traverse((object) => {
+    if (!object.isMesh || !object.material.isMeshStandardMaterial) return;
+    const list = groups.get(object.material) || [];
+    list.push(object);
+    groups.set(object.material, list);
+  });
+  for (const [material, objects] of groups) {
+    if (objects.length < 2) continue;
+    const geometries = objects.map((object) => {
+      const geometry = object.geometry.index
+        ? object.geometry.toNonIndexed()
+        : object.geometry.clone();
+      return geometry.applyMatrix4(object.matrixWorld);
+    });
+    const merged = mergeGeometries(geometries, false);
+    geometries.forEach((g) => g.dispose());
+    if (!merged) continue;
+    const batch = new THREE.Mesh(merged, material);
+    batch.castShadow = objects.some((o) => o.castShadow);
+    batch.receiveShadow = true;
+    objects.forEach((object) => {
+      object.removeFromParent();
+      object.geometry.dispose();
+    });
+    scene.add(batch);
+  }
+}
