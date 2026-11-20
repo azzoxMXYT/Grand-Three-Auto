@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       publish:
-        description: Publier la préversion v1.1.0
+        description: Publier la préversion v1.2.0
         type: boolean
         default: false
 
@@ -15,7 +15,26 @@ permissions:
   contents: write
 
 jobs:
+  graphics-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: mkdir -p release
+      - run: npm run dev > /tmp/vite.log 2>&1 &
+      - run: node scripts/browser-smoke.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Graphics-smoke
+          path: release/graphics-smoke.png
   windows:
+    needs: graphics-smoke
     runs-on: windows-latest
     timeout-minutes: 20
     steps:
@@ -44,22 +63,26 @@ jobs:
             release/SHA256SUMS.txt
           if-no-files-found: error
           retention-days: 30
-      - name: Publier la préversion v1.1.0
+      - name: Publier la préversion v1.2.0
         if: github.event_name == 'workflow_dispatch' && inputs.publish
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           cat > notes.md <<'NOTES'
-          ## Manettes et armes
-          - Manettes à mapping standard via Gamepad API (compatibilité effective selon navigateur, pilote et connexion).
-          - Stick gauche : déplacement/direction ; RT/LT : accélérer/reculer en voiture, tirer/viser à pied.
-          - Stick droit : visée à pied ; Y/triangle : véhicule ; X/carré : recharger ; RB/R1 : changer d’arme ; A/croix : courir/freiner ; Start : pause ; Select : caméra.
-          - Pistolet et carabine, chargeurs séparés, rechargement, traceurs et impacts sur cibles d’entraînement orange près du départ. Trois impacts détruisent une cible et rapportent 150 $. Réapparition après six secondes.
-          - Souris : clic gauche tirer, clic droit maintenu + déplacement pour viser ; R recharger ; F changer d’arme. Tir uniquement à pied.
+          ## Pacific Drive — graphismes et installation Windows
+          - Installateur Windows par utilisateur : choix du dossier, raccourcis bureau et menu Démarrer, désinstallation standard.
+          - Version portable également disponible, sans installation.
+          - Ciel atmosphérique, eau animée, peinture de carrosserie et vitres avec reflets d’environnement précalculés, asphalte texturé, végétation retravaillée, enseignes et mobilier côtier.
+          - Bouton de qualité Élevée / Performance pour adapter le rendu à votre PC.
+          - Conduite, exploration à pied, manettes standard, pistolet/carabine et cibles d’entraînement conservés. Échap pour les commandes.
 
-          Appuyez sur un bouton de la manette dans la fenêtre du jeu pour qu’elle soit détectée. Les mappings non standard ne sont pas pris en charge. La caméra manette est orientable à pied seulement. Aucun combat contre des PNJ ni dégâts aux véhicules dans cette version.
+          Téléchargez le fichier **Installation-x64.exe** pour installer le jeu, ou **Portable-x64.exe** pour le lancer sans installation. Windows 10/11 x64 avec accélération graphique requis. Tous les assets sont inclus.
 
-          Version Windows 10/11 x64 portable non signée : des avertissements Defender/SmartScreen restent possibles. Ne désactivez pas les protections. Compilation et tests automatisés vérifiés ; pas de validation matérielle avec une vraie manette ou de test manuel Windows dans cet environnement.
+          Prototype original stylisé : ce n’est pas un jeu complet ou photoréaliste de l’ampleur de GTA V. Pas de sauvegarde, combats contre des PNJ, intérieurs ou multijoueur.
+
+          **Sécurité :** exécutables non signés. Defender, SmartScreen ou une politique administrateur peuvent toujours bloquer leur lancement. Ce nouvel emballage ne supprime pas ces restrictions et ne désactive aucune protection. Pas de garantie d’absence d’alerte. Ne désactivez pas les protections Windows.
+
+          Tests automatisés du rendu WebGL, du tir et du changement de qualité avant compilation ; pas de validation manuelle sur Windows ni avec une manette physique.
           NOTES
-          gh release create v1.1.0 release/*.exe release/SHA256SUMS.txt --target "$GITHUB_SHA" --title "Pacific Drive v1.1.0 — Manettes et armes" --notes-file notes.md --prerelease
+          gh release create v1.2.0 release/*.exe release/SHA256SUMS.txt --target "$GITHUB_SHA" --title "Pacific Drive v1.2.0 — Graphismes et installateur Windows" --notes-file notes.md --prerelease

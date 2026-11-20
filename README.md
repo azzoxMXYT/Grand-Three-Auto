@@ -87,3 +87,13 @@ Téléchargez **Pacific-Drive-Navigateur.html** dans la release v1.1.0, puis ouv
 Cette version navigateur n’enlève ni ne contourne une protection Windows. Si une politique d’entreprise interdit aussi ces fichiers ou le navigateur, contactez l’administrateur. Aucun résultat d’analyse antivirus n’est garanti. Le `.exe` reste non signé.
 
 Pour reconstruire le fichier : `npm ci`, puis `npm run build:html`. Résultat : `release/Pacific-Drive-Navigateur.html`.
+
+## Version 1.2 : rendu et installateur Windows
+
+La release v1.2.0 propose deux exécutables : **Installation-x64.exe** (installation par utilisateur, dossier configurable, raccourcis et désinstallation) et **Portable-x64.exe** (sans installation). Le jeu embarque ses ressources et ne dépend pas d’un serveur.
+
+Rendu : ciel atmosphérique, océan animé, asphalte texturé, carrosserie vernie et vitres avec reflets d’environnement précalculés (pas des reflets temps réel de la ville), enseignes et mobilier du bord de mer. Le bouton **Graphismes** alterne entre le rendu élevé (ombres et résolution jusqu’à 2×) et le mode performance (sans ombres, résolution 1×).
+
+Cela reste une ville stylisée de prototype et non un jeu complet de la qualité de GTA V. L’installateur ne constitue pas une correction du blocage Defender : les exécutables sont toujours non signés, et toute politique de sécurité Windows reste applicable. Aucun certificat de signature n’est fourni avec ce dépôt.
+
+Le workflow Windows lance d’abord un test Chromium/WebGL du rendu, du tir à pied et du bouton de qualité. Il conserve une capture dans l’artefact `Graphics-smoke`. Le test manuel Windows et manette physique reste à effectuer.

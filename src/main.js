@@ -2,6 +2,7 @@ import * as THREE from "three";
 import "./style.css";
 import { createGamepadInput } from "./input.js";
 import { createCombat } from "./combat.js";
+import { setupGraphics, addCityDetails } from "./graphics.js";
 const scene = new THREE.Scene();
 scene.background = new THREE.Color("#accacd");
 scene.fog = new THREE.Fog("#accacd", 100, 360);
@@ -33,12 +34,10 @@ Object.assign(sun.shadow.camera, {
 sun.shadow.bias = -0.0005;
 scene.add(sun);
 scene.add(sun.target);
+const graphics = setupGraphics(scene, renderer, sun);
 const materials = {};
 function mat(c) {
-  return (materials[c] ??= new THREE.MeshStandardMaterial({
-    color: c,
-    roughness: 0.8,
-  }));
+  return (materials[c] ??= graphics.material(c));
 }
 function box(w, h, d, c, x = 0, y = 0, z = 0, parent = scene) {
   const o = new THREE.Mesh(
@@ -124,6 +123,7 @@ for (let gx = -2; gx < 2; gx++)
           box(w * 0.7, 1.2, 0.12, "#354d4c", x, 2, z + d / 2 + 0.12);
         }
       }
+addCityDetails({ scene, box, buildings });
 function palm(x, z) {
   const h = 7 + rand() * 4;
   const trunk = cylinder(0.17, 0.35, h, "#a08a65", x, h / 2, z);
@@ -133,19 +133,22 @@ function palm(x, z) {
   scene.add(g);
   for (let i = 0; i < 7; i++) {
     let a = (i * Math.PI * 2) / 7;
-    const leaf = box(
-      1.1,
-      0.16,
-      5,
-      "#527d59",
-      Math.sin(a) * 1.65,
-      -0.1,
-      Math.cos(a) * 1.65,
-      g,
+    const shape = new THREE.Shape();
+    shape.moveTo(0, 0);
+    shape.quadraticCurveTo(0.8, 1.2, 0, 4.8);
+    shape.quadraticCurveTo(-0.65, 1.3, 0, 0);
+    const leaf = new THREE.Mesh(
+      new THREE.ShapeGeometry(shape, 8),
+      new THREE.MeshStandardMaterial({
+        color: i % 2 ? "#527d59" : "#63894e",
+        side: THREE.DoubleSide,
+        roughness: 0.9,
+      }),
     );
-    leaf.rotation.y = a;
-    leaf.rotation.x = 0.2;
-    leaf.rotation.z = Math.sin(a) * 0.2;
+    leaf.rotation.set(-Math.PI / 2 + 0.22, a, 0);
+    leaf.rotation.z = a;
+    leaf.castShadow = true;
+    g.add(leaf);
   }
   cylinder(0.8, 0.3, 1, "#617b48", x + 0.25, h - 0.2, z);
 }
@@ -168,10 +171,17 @@ for (let i = 0; i < 20; i++) {
 }
 function car(color) {
   const g = new THREE.Group();
-  box(2.15, 0.58, 4.45, color, 0, 0.7, 0, g);
-  box(2.18, 0.22, 4.1, color, 0, 0.48, 0.06, g);
+  const paint = new THREE.MeshPhysicalMaterial({
+    color,
+    metalness: 0.45,
+    roughness: 0.25,
+    clearcoat: 1,
+    clearcoatRoughness: 0.12,
+  });
+  box(2.15, 0.58, 4.45, paint, 0, 0.7, 0, g);
+  box(2.18, 0.22, 4.1, paint, 0, 0.48, 0.06, g);
   box(1.85, 0.6, 2.15, "#263e44", 0, 1.23, -0.17, g);
-  box(1.87, 0.15, 1.65, color, 0, 1.58, -0.28, g);
+  box(1.87, 0.15, 1.65, paint, 0, 1.58, -0.28, g);
   const glass = box(1.74, 0.58, 0.08, "#8ab5bd", 0, 1.22, 1, g);
   glass.rotation.x = -0.35;
   box(1.72, 0.48, 0.08, "#668f9c", 0, 1.22, -1.25, g);
@@ -446,6 +456,7 @@ function frame() {
   const dt = Math.min(clock.getDelta(), 0.04);
   const pad = pollPad(!paused);
   if (!paused) {
+    graphics.update(dt);
     const up = keys.z || keys.w || keys.arrowup,
       down = keys.s || keys.arrowdown,
       left = keys.q || keys.a || keys.arrowleft,

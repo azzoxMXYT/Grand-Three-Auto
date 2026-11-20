@@ -1,13 +1,13 @@
 {
   "name": "grand-three-auto",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0",
     "desktop": "npm run build && electron .",
-    "dist:win": "npm run build && electron-builder --win portable --x64",
+    "dist:win": "npm run build && electron-builder --win nsis portable --x64",
     "test": "node --test src/*.test.js",
     "build:html": "npm run build && node scripts/standalone.mjs"
   },
@@ -16,6 +16,7 @@
     "vite": "^7.2.2"
   },
   "devDependencies": {
+    "@playwright/test": "^1.65.1",
     "electron": "^45.4.1",
     "electron-builder": "^26.18.0"
   },
@@ -38,16 +39,31 @@
     "win": {
       "target": [
         {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
           "target": "portable",
           "arch": [
             "x64"
           ]
         }
-      ],
-      "artifactName": "Pacific-Drive-${version}-Windows-${arch}.${ext}"
+      ]
     },
     "portable": {
-      "requestExecutionLevel": "user"
+      "requestExecutionLevel": "user",
+      "artifactName": "Pacific-Drive-${version}-Portable-${arch}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Pacific Drive",
+      "artifactName": "Pacific-Drive-${version}-Installation-${arch}.${ext}"
     }
   }
 }
