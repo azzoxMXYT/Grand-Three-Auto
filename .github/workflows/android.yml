@@ -20,7 +20,9 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
-      - uses: android-actions/setup-android@v3
+      - name: Préparer le SDK Android fourni par le runner
+        run: |
+          sdkmanager "platforms;android-36" "build-tools;36.0.0"
       - run: npm ci
       - run: npm test
       - run: npx playwright install --with-deps chromium
