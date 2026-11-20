@@ -46,7 +46,16 @@ jobs:
       - run: npm ci
       - run: npm test
       - name: Compiler le jeu Windows x64
-        run: npm run dist:win
+        shell: pwsh
+        run: |
+          $output = & npm run dist:win 2>&1
+          $code = $LASTEXITCODE
+          $output | Write-Output
+          if ($code -ne 0) {
+            $message = (($output | Select-Object -Last 65) -join "`n").Replace('%', '%25').Replace("`r", '%0D').Replace("`n", '%0A')
+            Write-Output "::error::$message"
+            exit $code
+          }
       - name: Calculer la somme de contrôle SHA-256
         shell: pwsh
         run: |
