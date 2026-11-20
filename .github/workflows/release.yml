@@ -2,6 +2,9 @@ name: Publier la release v1.0.0
 
 on:
   workflow_dispatch:
+  push:
+    branches: ['arena/e83fd17f-grand-three-auto']
+    paths: ['.github/workflows/release.yml']
 
 permissions:
   contents: write
